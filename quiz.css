@@ -4,6 +4,13 @@
     body {
       font-family: Poppins;
     }
+    #timer
+    {
+      text-align: center;
+      font-size: 25px;
+      font-weight: 400;
+      color: #f04946;
+    }
 
     .container {
       background-color: #f5f5f5;

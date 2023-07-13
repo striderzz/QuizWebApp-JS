@@ -15,15 +15,18 @@ const Data=[
    o:['Mt Everest','K2','Lhotse','Kachenjunga'],
    a:"Mt Everest"
    },
-   {q:"Which is the tallest building in the world ?",
-   o:['Shanghai Tower','Burj Khalifa','Jeddah Power','Tokyo Tower'],
-   a:"Burj Khalifa"
+   {q:"Which is the longest river in the world ?",
+   o:['Nile','Amazon','Mekong','Yellow River'],
+   a:"Nile"
    }
 ]
  const questionText=document.getElementById("question-text");
  const optionbox=document.getElementById("option-box");
  const nextButton=document.getElementById("next");
  const scoreText=document.getElementById("score");
+ const timerText=document.getElementById("timer");
+ let timeLimit=5;
+ let timerInterval;
 
  nextButton.addEventListener('click',Next);
 
@@ -63,6 +66,7 @@ const Data=[
  }
  function CheckAnswer(event)
  {
+    StopTimer();
     DisableOptionButtons();
     let selectedOption=event.target;
     let correctOption=Data[questionIndex].a;
@@ -95,10 +99,34 @@ const Data=[
       scoreText.innerHTML=`Final Score ${Math.round((score/Data.length)*100) +"%"}`;
       nextButton.innerHTML='Reset';
     }
+    
+ }
+ function TimeUpCondition()
+ {
+  DisableOptionButtons();
+  let correctOption=Data[questionIndex].a;
+  let correctOptionButton;
+  const options = Array.from(optionbox.children)
+  options.forEach((element,index)=>
+  {
+    if(element.innerHTML===correctOption)
+    {
+      element.classList.add('correctAnswer')
+    }
     else
     {
-      
+      element.classList.add('wrongAnswer');
     }
+    
+  })
+
+  nextButton.classList.remove('hideNextButton');
+  nextButton.classList.add('displayNextButton');  
+  if(questionIndex==Data.length-1)
+  {
+    scoreText.innerHTML=`Final Score ${Math.round((score/Data.length)*100) +"%"}`;
+    nextButton.innerHTML='Reset';
+  }
  }
  function Next()
  {
@@ -121,6 +149,7 @@ const Data=[
   EnableOptionButtons();
   LoadQuestions();
   LoadAnswers();
+  
   }
   else
   {
@@ -145,9 +174,44 @@ const Data=[
 
      //scoreText.innerHTML=`Final Score :${(score/Data.length)*100 +"%"}`;
   }
+  ResetTimer();
+  StartTimer();
   
 
  }
+ function StartTimer()
+ {
+   timerInterval=setInterval(()=>
+   {
+       timeLimit--;
+       UpdateTimerText();
+       if(timeLimit<0)
+       {
+        timerText.innerHTML='Time Up';
+        TimeUpCondition();
+        clearInterval(timerInterval)
+       }
+   },1000)
+ }
+ function StopTimer()
+ {
+  if(timeLimit>=0)
+  {
+     clearInterval(timerInterval);
+  }
+ }
+ function ResetTimer()
+ {
+  timeLimit=5;
+  UpdateTimerText();
+ }
+ function UpdateTimerText()
+ {
+  timerText.innerHTML="Time Left: "+timeLimit;
+ }
+
+
  LoadQuestions();
  LoadAnswers();
+ StartTimer();
  nextButton.classList.add('hideNextButton'); 
